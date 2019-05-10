@@ -97,7 +97,66 @@ class SortingRobot:
         Sort the robot's list.
         """
         # Fill this out
-        pass
+                # pick up first item
+        self.swap_item()
+        # T for right, F for left
+        direction = True
+        # turn on the light, allows us into main loop
+        self.set_light_on()
+        # traverse until we traverse without making a switch, switching directions when we reach the end
+        while self.light_is_on():
+            self.set_light_off()
+            self.traverse(direction)
+            # swap directions after traversing
+            direction = not direction
+        # now, swap held for none and list is sorted:
+        self.swap_item()
+
+    def traverse(self, direction):
+        # moves a direction until we can't, swaps items along the way
+        # T for right, F for left
+        if direction:
+            # keep moving, swapping if we can:
+            while self.can_move_right():
+                self.move_right()
+                # swap if held item is less
+                if self.compare_item() == -1:
+                    self.swap_item()
+                    # turn light on when we make a swap
+                    self.set_light_on()
+            # once we reach right end we're holding largest item, swap
+            if self.compare_item() == 1:
+                self.swap_item()
+                self.set_light_on()
+            # check if there are duplicate largest items on the end, move to end of duplicates
+            while self.compare_item() == 0:
+                self.move_left()
+                # swap once we reach the end of duplicates
+                if self.compare_item() == 1:
+                    self.swap_item()
+            # if None is on the left we're done
+            self.move_left()
+            if self.compare_item() == None:
+                self.set_light_off()
+            else:
+                self.move_right()
+        else:
+            # move left until we reach none, swapping if we can
+            while not self.compare_item() == None:
+                self.move_left()
+                # swap if held item is greater
+                if self.compare_item() == 1:
+                    self.swap_item()
+                    # turn light on if we make a swap
+                    self.set_light_on()
+            # if we hit None, robot is holding smallest value so swap and move None one forward
+            self.swap_item()
+            self.move_right()
+            self.swap_item()
+            # light on in case we moved smallest item from end
+            self.set_light_on()
+
+        return
 
 
 if __name__ == "__main__":
